@@ -1,0 +1,208 @@
+"""
+Xinyi Liu
+Program : xliuP6.py
+Description: The program mimic a card game called MickSlam with 52 cards in the deck. The player and the computer
+             are each dealt five cards from the standard French deck. In this deck, Ace is worth 11 points, J, Q, K
+             are each worth 10 points and the others are worth their original value. The cards and total points of 
+             the player's hand are displayed. The player then decides whether she thinks the computer has 
+             a better hand or not. After the player's input, the computer's hand and points are displayed. The player
+             wins or loses depending on whether she guessed the outcome correctly. Play continues until the player
+             quits or there are no more cards in the deck.
+      Input: The player's guess of which one would win or quit (a string). The player will input p if she thinks
+             the player will win or c if she thinks the computer will win. An input of q ends the game (if there 
+             are no more cards, the game ends as well). An input of other else will show an error and ends the game.
+     Output: The program should play the game, and show each hand as the game progresses. For each hand, all of the 
+             player's and computer's cards should be displayed. The card display should include the suit (a symbol) 
+             and the value of the card (an integer), including face cards (A=Ace, K=King, Q=Queen, J=Jack)(string). 
+             The totals for the player's and computer's hand (integers) should also be displayed as well as an 
+             indication if the player won or lost that round. The total number of winning guesses (integers) are 
+             displayed at the end of the game.
+"""
+import random
+class Deck:
+    def __init__(self1, num):
+    # This constructor initializes all the necessary variables and creates a deck of card.
+    # Parameter: self1 (a general name of the instant object) and the number of cards per hand (integer).
+    # The function has no returns 
+        self1.NUM = num                                                     # The number of cards per hand                             
+        self1.deckList = list(range(52))                                    # makes a deck of 52 cards
+        for i in self1.deckList:                                            # set all cards to false
+            self1.deckList [i] = False;
+        self1.count = 0                                                     # counts number of cards used
+        self1.card = 0                                                      # a certain card in the deck
+
+    def getCount (self1):
+    # This method returns the current count
+    # Parameter: self1 (a general name of the instant object)
+    # Return: the current count (integer)
+        return self1.count
+    
+    def dealCard (self1):
+    # This method randomly select a card from the deck, marks the selected cards, and keep track of the count
+    # Parameter: self1 (a general name of the instant object)
+    # Return: the position of the card in the deck (integer) or a negative integer when all the cards has been chosen
+        if self1.count < (52//self1.NUM * self1.NUM):                       # randomly choose a card from the deck
+            self1.card = random.randint(0,51)         
+            while (self1.deckList[self1.card] == True):                     # check if card has been used before 
+                self1.card = random.randint(0, 51)                          # and get another
+            self1.deckList[self1.card] = True
+            self1.count = self1.count + 1                                   # get one count after choosing a card
+            #print(self1.count)
+            return(self1.card)                                              # return the position of the card among 52
+        else:
+            print ("All the cards have been dealt")                         # If all the cards has been chosen, print
+            return (-1)                                                     # out a message and return a negative number
+            
+class Games:
+    def __init__(self2, Numcard):
+    # This constructor initializes all the necessary variables and creates an instance of Deck object
+    # Parameter: self2 (a general name of the instant object) and the number of cards per hand (integer).
+    # The function has no returns 
+        self2.num = Numcard                                                 # get the number of cards per hand
+        self2.deck = Deck(self2.num)                                        # creates an instance of Deck object
+   
+    def FaceConv(self2, value):
+    # This methods convert original values of the card to standard face and values
+    # Parameter: self2, and the value (an integer) of the card
+    # Return: face of the card (a string), and the point that a card is worth (an integer)
+        if value == 1:                                                      
+            face = "A"                                                      # assign the face 
+            point = 11                                                      # assign the value
+        elif value == 11:
+            face = "J"                                                      # assign the face 
+            point = 10                                                      # assign the value
+        elif value == 12:
+            face = "Q"                                                      # assign the face 
+            point = 10                                                      # assign the value
+        elif value == 13:
+            face = "K"                                                      # assign the face 
+            point = 10                                                      # assign the value
+        else:
+            face = value                                                
+            point = face
+        return(face, point)  
+    
+    def SuitConv(self2, cardnum):
+    # This methods assign suits to the cards
+    # Parameter: self2, and the position of the card among 52 numbers.
+    # Return: suit of the card (a string made of unicode), face of the card (a string), 
+            # and the point that a card is worth (an integer)
+        if cardnum < 13:                                                    # define the value of card whose position 
+            value = cardnum + 1                                             # from 0 to 12 
+            suit = u"\u2665"                                                # suit = "Heart"
+        elif cardnum < 26:
+            value = cardnum - 12
+            suit = u"\u2666"                                                # suit = "Diamonds"
+        elif cardnum < 39:
+            value = cardnum - 25
+            suit = u"\u2663"                                                # suit = "Clubs"
+        else:
+            value = cardnum - 38
+            suit = u"\u2660"                                                # suit = "Spades"
+        face, point = self2.FaceConv(value)                                 # get face and point from FaceCon method
+        return(suit, face, point)                                           # return suit, face and point
+
+    def Store(self2, character):
+    # This methods store the cards that are chosen from the deck
+    # Parameter: self2, and the response of the player (a character)
+    # Return: the total points of a hand of cards(integer)
+        facelist = []                                                       # create an empty list for cards' faces                                   
+        suitlist = []                                                       # create an empty list for cards' suits
+        point = 0                                                    
+        for i in range (self2.num):                                         # a loop getting cards
+            cardnum = self2.deck.dealCard()                                 # call the dealCard function in Deck      
+            if cardnum >= 0:                                                # if the cards hasn't been all chosen
+                suit, face, pt = self2.SuitConv(cardnum)                    # convert card's suit
+                point += pt                                                 # adds up points
+                facelist.append(face)                                       # append new values in the list
+                suitlist.append(suit)                                       # append new values in the list
+            else:                                                           # if all the cards has been chosen
+                break                                                       # quit the loop
+        
+        if character == "p":                                                # print if get a response of "p"
+            print("Your cards:")                                   
+        else:
+            print("Computer's cards:")                                      # print if get a response of "p"
+        i = 0
+        
+        while (i < self2.num):
+            print(facelist[i], suitlist[i], sep = "", end = " ")            # print out the face and suit in lists
+            i = i+1
+        return point                                                        # return the total points
+    
+    def Compare(self2, psum, csum, answer):
+    # This methods compare the player's points and the computer's points in one turn
+    # Parameter: self2, the player's points (int), the computer's points (int) and the response of the player (ch)
+    # Return: 1 represents win and 0 represents no win (integers)
+        win = 0                           
+        if psum < csum:                                                     # if player's is smaller than computer's
+            if answer == "p":                                               # and the answer is "p"
+                print("You lost!")                                          # lost
+            else:
+                print("You win!")                                           # if answer is "c", win
+                win = 1      
+        elif psum > csum:
+            if answer == "p":
+                print("You win!")
+                win = 1
+            else:
+                print("You lost!")     
+        else:
+            print("Tie!")
+        return win
+    
+    def Oddeven(self2, number):
+    # This methods decide if the number of turns is odd or even given number of cards per hand and fix the odd one
+    # Parameter: self2, the exact division of 52 over the number of cards per hand (integer)
+    # Return: the fixed the number of turns (integer)
+        if (number) % 2 == 0:                                               # the situation when it is even
+            number = number
+        else:                                                               # the situation when it is odd
+            number = number-1
+        return number
+    
+    def startGame(self2):
+    # This methods is the main body of the game and distinguish different scenarios based on player's input
+    # Parameter: self2,
+    # Return: no return
+        Win = 0 
+        totalwin = 0
+        dealt = True                                                        # a boolean variable that control game
+        number = self2.Oddeven(52//self2.num)                               # get the number of runs from a function
+        while self2.deck.getCount() < (number * self2.num):                 
+            playerpoint = self2.Store("p")                                  # store player's points
+            print("  Total:", playerpoint)                                  
+            answer = input("Do you predict the player (p) or "
+                           "computer (c) will win (q to quit)? ")
+            if answer == "p" or answer == "c":
+                computerpoint = self2.Store("c")                            # store computer's points
+                print("  Total:", computerpoint)   
+                Win = self2.Compare(playerpoint, computerpoint, answer)     # compare player's and computer's poitns
+                totalwin += Win
+                Enter = input("Please click RETURN or ENTER key "           # a hint
+                              "to continue the game")
+                print()
+            elif answer == "q":                                             # when the input is q
+                print("Game Over!")                                         # quit the game
+                dealt = False
+                break
+            else:
+                print("Error!")
+                dealt = False
+                break                
+        if dealt == True:                                                   # the situation when all the cards have 
+            print("All the cards have been dealt")                          # been chosen
+            print("Total number of winning guesses:", totalwin)
+            
+        else:
+            print("Total number of winning guesses:", totalwin)
+
+def main ():
+# This function creates an instance of Game object
+# Parameter: no parameter
+# Return: no return
+    numcard = 5                                                             # set up the number of cards per hand
+    playGame = Games(numcard)                                               # creates an instance of Game object
+    playGame.startGame()                                                    # call the startGame function
+
+main()
